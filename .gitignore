@@ -1,0 +1,5 @@
+# gerado pelo containerlab
+clab-redes/
+.topologia.clab.yml.bak
+# link simbolico criado pelo rodar.sh
+configs/atual
