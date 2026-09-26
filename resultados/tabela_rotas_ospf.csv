@@ -1,0 +1,6 @@
+protocolo,roteador,prefixos_total,rotas_aprendidas,next_hops
+ospf,r1,16,12,15
+ospf,r2,16,12,15
+ospf,r3,16,11,14
+ospf,r4,16,11,14
+ospf,r5,16,12,14

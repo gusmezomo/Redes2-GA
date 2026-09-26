@@ -1,0 +1,6 @@
+protocolo,roteador,prefixos_total,rotas_aprendidas,next_hops
+rip,r1,16,12,12
+rip,r2,16,12,12
+rip,r3,16,11,11
+rip,r4,16,11,11
+rip,r5,16,12,12
