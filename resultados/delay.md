@@ -1,0 +1,3 @@
+* OSPF e RIP empatam no caminho. Nesta topologia, todos os links têm o mesmo custo no OSPF, então "menor custo" e "menos saltos" (o critério do RIP) dão o mesmo resultado. Eles só divergiriam se os links tivessem velocidades diferentes; aí o OSPF preferiria um caminho mais longo porém mais rápido, enquanto o RIP continuaria contando saltos. Vale citar isso como limitação conhecida do RIP.
+* O BGP é o único que pegou um caminho não mínimo, porque não enxerga os roteadores dentro de um AS.
+* O RTT seguiu a mesma ordem (BGP maior), mas as diferenças são de centésimos de milissegundo, dentro da variação normal do laboratório. Na apresentação, é mais seguro tratar o RTT como "praticamente igual nos três" e usar o número de saltos como a diferença real.
