@@ -1,0 +1,6 @@
+protocolo,roteador,duracao_s,pacotes,bytes,pacotes_por_s,bytes_por_s,memoria_kb
+bgp,r1,120,6,388,0.05,3.2,12428
+bgp,r2,120,6,388,0.05,3.2,11228
+bgp,r3,120,10,634,0.083,5.3,11120
+bgp,r4,120,6,426,0.05,3.5,13096
+bgp,r5,120,8,492,0.067,4.1,11860
