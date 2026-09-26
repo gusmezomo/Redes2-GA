@@ -1,6 +1,0 @@
-protocolo,roteador,duracao_s,pacotes,bytes,pacotes_por_s,bytes_por_s,memoria_kb
-rip,r1,120,8,1696,0.067,14.1,4540
-rip,r2,120,8,1696,0.067,14.1,4624
-rip,r3,120,15,3880,0.125,32.3,4556
-rip,r4,120,12,3104,0.1,25.9,4572
-rip,r5,120,8,1696,0.067,14.1,4348

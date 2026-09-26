@@ -1,6 +1,0 @@
-protocolo,roteador,prefixos_total,rotas_aprendidas,next_hops
-bgp,r1,16,12,12
-bgp,r2,16,12,12
-bgp,r3,16,11,11
-bgp,r4,16,11,11
-bgp,r5,16,12,24

@@ -1,6 +1,0 @@
-protocolo,roteador,duracao_s,pacotes,bytes,pacotes_por_s,bytes_por_s,memoria_kb
-ospf,r1,120,24,1632,0.2,13.6,6328
-ospf,r2,120,24,1632,0.2,13.6,6308
-ospf,r3,120,36,2448,0.3,20.4,6292
-ospf,r4,120,36,2448,0.3,20.4,6328
-ospf,r5,120,24,1632,0.2,13.6,6116

@@ -1,0 +1,7 @@
+protocolo,modo,pings_enviados,pings_perdidos,interrupcao_s,janela_s,pacotes_controle,bytes_controle
+bgp,link,350,0,0.0,35,30,1973
+bgp,silenciosa,2450,1456,145.6,245,75,4749
+ospf,link,337,0,0.0,35,80,7220
+ospf,silenciosa,2450,299,29.9,245,263,18764
+rip,link,350,282,28.2,35,28,5056
+rip,silenciosa,2450,1760,176.0,245,93,20796
