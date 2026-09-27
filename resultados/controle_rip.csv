@@ -1,0 +1,6 @@
+protocolo,roteador,duracao_s,pacotes,bytes
+rip,r1,120,6,1272
+rip,r2,120,6,1272
+rip,r3,120,15,3880
+rip,r4,120,15,3880
+rip,r5,120,6,1272

@@ -1,0 +1,6 @@
+protocolo,roteador,duracao_s,pacotes,bytes
+ospf,r1,120,24,1632
+ospf,r2,120,24,1632
+ospf,r3,120,36,2448
+ospf,r4,120,36,2448
+ospf,r5,120,24,1632
