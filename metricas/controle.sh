@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
-# =============================================================
 # Metrica 3: pacotes de roteamento e taxa de transmissao
-#
-# ITENS DO PDF ATENDIDOS (criterio 6 da avaliacao):
-#   [PDF] "quantidade de pacotes de roteamento enviados na rede" -> coluna pacotes
-#   [PDF] "taxa de transmissao utilizada pelo protocolo"          -> coluna bytes
+# "quantidade de pacotes de roteamento enviados na rede" -> coluna pacotes
+# "taxa de transmissao utilizada pelo protocolo"          -> coluna bytes
 #         (o graficos.py converte bytes em kbit/s)
 #
 # Captura por DURACAO segundos os pacotes do protocolo que cada
-# roteador ENVIA, e conta pacotes e bytes. Rode com a rede
-# estavel (>= 1 min apos o rodar.sh).
+# roteador ENVIA, e conta pacotes e bytes.
+# Rode com a rede estavel (>= 1 min apos o rodar.sh).
 #
 # O tcpdump roda num container auxiliar que compartilha a rede
 # do roteador (--network container:...), pois a imagem do FRR
 # nao tem tcpdump.
-#
-# Uso: ./metricas/controle.sh
-# Saida: resultados/controle_<protocolo>.csv
-# =============================================================
+
 cd "$(dirname "$0")/.."
 
 PROTO=$(readlink configs/atual)
@@ -49,16 +43,12 @@ wait   # espera as 5 terminarem
 #    onde N e o tamanho do pacote IP em bytes.
 echo "protocolo,roteador,duracao_s,pacotes,bytes" > "$ARQ"
 for r in r1 r2 r3 r4 r5; do
-  # ---------------------------------------------------------
-  # [PDF] QUANTIDADE DE PACOTES DE ROTEAMENTO ENVIADOS NA REDE
+  # QUANTIDADE DE PACOTES DE ROTEAMENTO ENVIADOS NA REDE
   # uma linha "IP (tos" = um pacote enviado
-  # ---------------------------------------------------------
   pacotes=$(grep -c " IP (tos" "$TMP/$r.txt")
-  # ---------------------------------------------------------
-  # [PDF] TAXA DE TRANSMISSAO UTILIZADA PELO PROTOCOLO
+  # TAXA DE TRANSMISSAO UTILIZADA PELO PROTOCOLO
   # soma o tamanho (length N) de todos os pacotes; a taxa e
   # bytes / DURACAO, calculada em kbit/s no graficos.py
-  # ---------------------------------------------------------
   bytes=$(grep " IP (tos" "$TMP/$r.txt" \
           | sed -E 's/.*length ([0-9]+)\)$/\1/' \
           | awk '{s += $1} END {print s + 0}')

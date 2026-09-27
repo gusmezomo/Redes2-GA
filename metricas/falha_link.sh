@@ -1,23 +1,11 @@
 #!/usr/bin/env bash
-# =============================================================
 # Metrica 4: comportamento com mudanca na topologia
-#
-# ITENS DO PDF ATENDIDOS:
-#   [PDF] criterio 6: "etc." (outras metricas de roteamento)
-#   [PDF] definicao: "analise do comportamento dos protocolos diante de
-#         alteracoes na conectividade" / "comportamento em situacoes de
-#         mudanca da topologia"  -> coluna interrupcao_s
-#
 # 1. PC1 pinga o PC5 10x por segundo (caminho normal: R1-R3-R5)
 # 2. apos 5 s, a interface do R3 que liga ao R5 e desligada
 # 3. o protocolo precisa desviar o trafego (ex.: R3-R4-R5)
 # 4. tempo de interrupcao = pings perdidos x 0,1 s
 # Ao mesmo tempo, conta os pacotes de controle gerados na rede.
-#
-# Rode com a rede estavel (>= 1 min apos o rodar.sh).
-# Uso: ./metricas/falha_link.sh
-# Saida: resultados/falha_link_<protocolo>.csv
-# =============================================================
+
 cd "$(dirname "$0")/.."
 
 PROTO=$(readlink configs/atual)
@@ -48,9 +36,7 @@ sleep 2
 # 2) ping continuo PC1 -> PC5
 docker exec clab-redes-pc1 ping -i 0.1 -c $PINGS -q 192.168.5.10 > "$TMP/ping.txt" &
 
-# ---------------------------------------------------------
-# [PDF] MUDANCA NA TOPOLOGIA: desliga a interface eth3 do R3 (link R3-R5)
-# ---------------------------------------------------------
+#MUDANCA NA TOPOLOGIA: desliga a interface eth3 do R3 (link R3-R5)
 sleep $ANTES
 docker exec clab-redes-r3 ip link set eth3 down
 echo "Link R3-R5 derrubado. Observando..."
@@ -61,10 +47,8 @@ wait   # espera o ping e as capturas terminarem
 docker exec clab-redes-r3 ip link set eth3 up
 echo "Link restaurado."
 
-# ---------------------------------------------------------
 # [PDF] COMPORTAMENTO NA MUDANCA: tempo com o trafego interrompido
 # cada ping perdido = 0,1 s sem conectividade
-# ---------------------------------------------------------
 enviados=$(grep -oE "[0-9]+ packets transmitted" "$TMP/ping.txt" | cut -d' ' -f1)
 recebidos=$(grep -oE "[0-9]+ (packets )?received" "$TMP/ping.txt" | cut -d' ' -f1)
 perdidos=$((enviados - recebidos))
