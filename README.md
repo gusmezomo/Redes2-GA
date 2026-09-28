@@ -2,7 +2,9 @@
 
 Laboratório com **5 roteadores FRRouting** distribuídos em **3 Sistemas Autônomos**, emulado com **Containerlab + Docker**. Sobre a mesma topologia física são executados, **um de cada vez**, três protocolos de roteamento: **OSPF**, **RIP** e **BGP**. Para cada protocolo são coletadas as métricas pedidas no enunciado e, ao final, gerados gráficos comparativos.
 
-📹 **Vídeo de demonstração:** _[adicionar link]_
+📹 **Vídeo de demonstração:**
+
+https://github.com/user-attachments/assets/cd7fb304-a841-4203-9c32-7e42bb4a9364
 
 ---
 
