@@ -1,28 +1,18 @@
 # /// script
 # dependencies = ["matplotlib"]
 # ///
-"""
-[PDF] Criterio 7: "comparar os tres algoritmos de roteamento com graficos
-para cada metrica". Um grafico por metrica, comparando OSPF, RIP e BGP.
+# Gera um grafico por metrica, comparando OSPF, RIP e BGP.
+# Le os CSVs de resultados/ e salva as imagens em graficos/.
+# Uso: uv run metricas/graficos.py
 
-  1_tabela_rotas.png -> [PDF] tamanho da tabela de roteamento
-  2_delay.png        -> [PDF] delay
-  3_controle.png     -> [PDF] quantidade de pacotes de roteamento enviados na rede
-                        [PDF] taxa de transmissao utilizada pelo protocolo
-  4_falha_link.png   -> [PDF] etc. / comportamento em mudanca da topologia
-
-So le os CSVs de resultados/ (gerados pelos scripts .sh) e desenha.
-
-Uso: uv run metricas/graficos.py
-Saida: graficos/1_tabela_rotas.png, 2_delay.png, 3_controle.png, 4_falha_link.png
-"""
 import csv
 import os
 
 import matplotlib
-matplotlib.use("Agg")
+matplotlib.use("Agg")   # salva em arquivo, sem abrir janela
 import matplotlib.pyplot as plt
 
+# vai para a pasta do projeto e cria a pasta dos graficos
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 os.makedirs("graficos", exist_ok=True)
 
@@ -30,17 +20,20 @@ PROTOCOLOS = ["ospf", "rip", "bgp"]
 NOMES = {"ospf": "OSPF", "rip": "RIP", "bgp": "BGP"}
 CORES = {"ospf": "#2a78c7", "rip": "#e08a1e", "bgp": "#3a9a5b"}
 ROTEADORES = ["r1", "r2", "r3", "r4", "r5"]
+
+# estilo dos graficos
 plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.right": False,
                      "axes.grid": True, "axes.grid.axis": "y", "grid.alpha": 0.3,
                      "axes.axisbelow": True})
 
 
+# le um CSV, ex.: ler("delay", "ospf") -> resultados/delay_ospf.csv
 def ler(metrica, proto):
-    """Le resultados/<metrica>_<proto>.csv"""
     with open(f"resultados/{metrica}_{proto}.csv") as f:
         return list(csv.DictReader(f))
 
 
+# escreve o valor em cima de cada barra (ou um texto no lugar do zero)
 def rotular(ax, barras, fmt="{:g}", zero=None):
     for b in barras:
         h = b.get_height()
@@ -49,8 +42,8 @@ def rotular(ax, barras, fmt="{:g}", zero=None):
                     fontsize=9, xytext=(0, 2), textcoords="offset points")
 
 
+# grafico simples: uma barra por protocolo
 def por_protocolo(ax, valores, titulo, ylabel, fmt="{:g}", zero=None):
-    """Uma barra por protocolo."""
     b = ax.bar([NOMES[p] for p in PROTOCOLOS], [valores[p] for p in PROTOCOLOS],
                color=[CORES[p] for p in PROTOCOLOS], width=0.6)
     rotular(ax, b, fmt, zero)
@@ -58,6 +51,7 @@ def por_protocolo(ax, valores, titulo, ylabel, fmt="{:g}", zero=None):
     ax.margins(y=0.15)
 
 
+# coloca o titulo e salva a imagem
 def salvar(fig, nome, titulo):
     fig.suptitle(titulo, fontsize=14, fontweight="bold")
     fig.tight_layout()
@@ -66,12 +60,14 @@ def salvar(fig, nome, titulo):
     print(f"graficos/{nome}.png")
 
 
-# ---------- 1. [PDF] TAMANHO DA TABELA DE ROTEAMENTO (+ next-hops, complemento)
+# ---------- 1. Tamanho da tabela de roteamento
+# dois graficos lado a lado: prefixos e next-hops de cada roteador,
+# com uma barra de cada protocolo por roteador
 fig, axs = plt.subplots(1, 2, figsize=(13, 4.8))
 larg = 0.26
 for i, p in enumerate(PROTOCOLOS):
     d = {l["roteador"]: l for l in ler("tabela_rotas", p)}
-    xs = [x + (i - 1) * larg for x in range(5)]
+    xs = [x + (i - 1) * larg for x in range(5)]   # desloca a barra de cada protocolo
     for ax, campo in zip(axs, ["prefixos_total", "next_hops"]):
         b = ax.bar(xs, [int(d[r][campo]) for r in ROTEADORES], larg,
                    color=CORES[p], label=NOMES[p])
@@ -84,10 +80,10 @@ for ax in axs:
 axs[1].legend()
 salvar(fig, "1_tabela_rotas", "Métrica 1 — Tamanho da tabela de roteamento")
 
-# ---------- 2. [PDF] DELAY: RTT medio dos 20 pares
-# A barra e a media dos RTTs medios; a linha preta vai da media dos RTTs
-# minimos ate a media dos maximos, mostrando a variacao da medicao.
-# Se as linhas dos protocolos se sobrepoem, a diferenca esta dentro do ruido.
+
+# ---------- 2. Delay
+# barra = media dos RTTs medios dos 20 pares de PCs
+# linha preta = vai da media dos RTTs minimos ate a dos maximos (variacao)
 def media_col(dados, campo):
     return sum(float(l[campo]) for l in dados) / len(dados)
 
@@ -109,26 +105,29 @@ ax.set(title="RTT médio entre os 20 pares de PCs\n(linha: do RTT mínimo ao má
 ax.margins(y=0.15)
 salvar(fig, "2_delay", "Métrica 2 — Delay")
 
-# ---------- 3. [PDF] QUANTIDADE DE PACOTES (pacotes/s) e TAXA DE TRANSMISSAO (kbit/s)
+
+# ---------- 3. Pacotes de roteamento e taxa de transmissao
+# soma os 5 roteadores e divide pela duracao da captura
 pps, kbps = {}, {}
 for p in PROTOCOLOS:
     d = ler("controle", p)
     dur = float(d[0]["duracao_s"])
-    # [PDF] pacotes de roteamento enviados na rede, por segundo
-    pps[p] = sum(int(l["pacotes"]) for l in d) / dur
-    # [PDF] taxa de transmissao: bytes x 8 (bits) / duracao / 1000 (kilo)
-    kbps[p] = sum(int(l["bytes"]) for l in d) * 8 / dur / 1000
+    pps[p] = sum(int(l["pacotes"]) for l in d) / dur                 # pacotes por segundo
+    kbps[p] = sum(int(l["bytes"]) for l in d) * 8 / dur / 1000       # bytes -> kbit/s
 fig, axs = plt.subplots(1, 2, figsize=(12, 4.8))
 por_protocolo(axs[0], pps, "Pacotes de roteamento enviados na rede", "pacotes/s", "{:.2f}")
 por_protocolo(axs[1], kbps, "Taxa de transmissão usada pelo protocolo", "kbit/s", "{:.2f}")
 salvar(fig, "3_controle", "Métrica 3 — Tráfego de controle (rede estável, 120 s)")
 
-# ---------- 4. [PDF] COMPORTAMENTO EM MUDANCA DA TOPOLOGIA: falha do link R3-R5
+
+# ---------- 4. Queda do link R3-R5
+# esquerda: tempo sem conexao de cada protocolo
 f = {p: ler("falha_link", p)[0] for p in PROTOCOLOS}
 fig, axs = plt.subplots(1, 2, figsize=(12, 4.8))
 por_protocolo(axs[0], {p: float(f[p]["interrupcao_s"]) for p in PROTOCOLOS},
               "Tempo com tráfego interrompido (PC1 → PC5)", "segundos", zero="<0.1")
-# pacotes de controle na falha x o que seria enviado com a rede estavel no mesmo tempo
+
+# direita: pacotes de controle com a falha (colorido) x rede estavel no mesmo tempo (cinza)
 normal = {p: pps[p] * float(f[p]["duracao_s"]) for p in PROTOCOLOS}
 xs = range(3)
 b1 = axs[1].bar([x - 0.18 for x in xs], [normal[p] for p in PROTOCOLOS], 0.36, color="#b8b8b8")

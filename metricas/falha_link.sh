@@ -47,7 +47,7 @@ wait   # espera o ping e as capturas terminarem
 docker exec clab-redes-r3 ip link set eth3 up
 echo "Link restaurado."
 
-# [PDF] COMPORTAMENTO NA MUDANCA: tempo com o trafego interrompido
+# COMPORTAMENTO NA MUDANCA: tempo com o trafego interrompido
 # cada ping perdido = 0,1 s sem conectividade
 enviados=$(grep -oE "[0-9]+ packets transmitted" "$TMP/ping.txt" | cut -d' ' -f1)
 recebidos=$(grep -oE "[0-9]+ (packets )?received" "$TMP/ping.txt" | cut -d' ' -f1)
