@@ -1,4 +1,4 @@
-# Trabalho I – Redes: comparação de protocolos de roteamento
+# Trabalho GA – Redes: Protocolos de roteamento
 
 Laboratório com **5 roteadores FRRouting** distribuídos em **3 Sistemas Autônomos**, emulado com **Containerlab + Docker**. Sobre a mesma topologia física são executados, **um de cada vez**, três protocolos de roteamento: **OSPF**, **RIP** e **BGP**. Para cada protocolo são coletadas as métricas pedidas no enunciado e, ao final, gerados gráficos comparativos.
 
